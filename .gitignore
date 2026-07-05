@@ -1,0 +1,6 @@
+.claude/
+*.mp4
+
+# Loose source files already consolidated into assets/
+/photo.png
+/Screenshot*.png
