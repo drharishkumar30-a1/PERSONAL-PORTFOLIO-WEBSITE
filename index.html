@@ -9,6 +9,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script>
+(function () {
+  try {
+    var stored = localStorage.getItem('theme');
+    var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
@@ -29,13 +38,38 @@
       <a href="#contact" class="nav-link">Contact</a>
     </nav>
 
-    <a href="#contact" class="btn btn-primary btn-nav">Get in Touch</a>
+    <div class="header-actions">
+      <button class="icon-btn" id="cmdkTrigger" aria-label="Open quick navigation (Cmd+K)" type="button">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"></circle><line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></line></svg>
+        <span class="icon-btn-kbd">&#8984;K</span>
+      </button>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" type="button">
+        <svg class="icon-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.6"></circle><g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="10" y1="1.5" x2="10" y2="3.5"></line><line x1="10" y1="16.5" x2="10" y2="18.5"></line><line x1="18.5" y1="10" x2="16.5" y2="10"></line><line x1="3.5" y1="10" x2="1.5" y2="10"></line><line x1="15.8" y1="4.2" x2="14.4" y2="5.6"></line><line x1="5.6" y1="14.4" x2="4.2" y2="15.8"></line><line x1="15.8" y1="15.8" x2="14.4" y2="14.4"></line><line x1="5.6" y1="5.6" x2="4.2" y2="4.2"></line></g></svg>
+        <svg class="icon-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M17 11.2A7.5 7.5 0 1 1 8.8 3a6 6 0 0 0 8.2 8.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+      </button>
+      <a href="#contact" class="btn btn-primary btn-nav">Get in Touch</a>
+    </div>
 
     <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
+
+<!-- COMMAND PALETTE -->
+<div class="cmdk-overlay" id="cmdkOverlay" role="dialog" aria-modal="true" aria-label="Quick navigation">
+  <div class="cmdk-panel">
+    <div class="cmdk-input-row">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.6"></circle><line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></line></svg>
+      <input type="text" id="cmdkInput" class="cmdk-input" placeholder="Jump to a section or action…" autocomplete="off" spellcheck="false">
+      <kbd class="cmdk-esc">Esc</kbd>
+    </div>
+    <ul class="cmdk-list" id="cmdkList"></ul>
+  </div>
+</div>
+
+<!-- SCROLL SPY DOT NAV -->
+<nav class="dot-nav" id="dotNav" aria-label="Section navigation"></nav>
 
 <main>
 
@@ -52,6 +86,7 @@
         </defs>
       </svg>
       <div class="hero-grid"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
     </div>
 
     <div class="container hero-inner">
@@ -116,64 +151,56 @@
       <p class="section-eyebrow reveal">About</p>
       <h2 class="section-title reveal">A clinician's eye on insurance operations</h2>
 
-      <div class="about-grid">
-        <p class="about-summary reveal">
-          Medical Claims Audit and Adjudication professional with <strong>3.5+ years of hands-on
-          experience</strong> across India's health insurer and TPA landscape, combining a medical
-          degree (BHMS, University of Delhi) with a Licentiate in General Insurance (III) &mdash; a
-          rare dual qualification that bridges clinical reasoning with insurance operations expertise.
-          <br><br>
-          Currently serving as <strong>Manager &ndash; Health Claims</strong> at IndusInd General
-          Insurance in Hyderabad, where I process cashless health insurance claims &mdash; covering
-          intake, eligibility verification, pre-authorization review, and claim evaluation with
-          approval/rejection decisions.
-          <br><br>
-          Previously, I served as <strong>Manager &ndash; Medical Claims Audit</strong> at Care
-          Health Insurance Ltd., one of India's largest standalone health insurers, where I audited
-          <strong>1,200+ cashless and reimbursement claims monthly</strong> as a standing member of
-          the Claims Rejection Committee (CRC). My work spanned end-to-end claims auditing, Fraud
-          Waste &amp; Abuse (FWA) detection, medical necessity review, non-admissible charge
-          identification, provider billing analysis, and hospital utilization trend monitoring
-          across 10+ clinical specialties.
-          <br><br>
-          Before that, I served as Medical Officer &ndash; Claims at Safeway Insurance TPA Pvt.
-          Ltd., handling pre-authorization and cashless hospitalization evaluations across
-          multi-specialty cases for multiple insurer clients &mdash; giving me a comprehensive view
-          of both the insurer and TPA sides of the health insurance ecosystem.
-        </p>
+      <div class="about-bento">
+        <div class="tilt-card about-bio-card reveal">
+          <span class="status-pill"><span class="status-dot" aria-hidden="true"></span>Currently at IndusInd General Insurance</span>
+          <p class="about-summary">
+            Medical Claims Audit and Adjudication professional with <strong>3.5+ years of hands-on
+            experience</strong> across India's health insurer and TPA landscape, combining a medical
+            degree (BHMS, University of Delhi) with a Licentiate in General Insurance (III) &mdash; a
+            rare dual qualification that bridges clinical reasoning with insurance operations expertise.
+            <br><br>
+            Currently serving as <strong>Manager &ndash; Health Claims</strong> at IndusInd General
+            Insurance in Hyderabad, where I process cashless health insurance claims &mdash; covering
+            intake, eligibility verification, pre-authorization review, and claim evaluation with
+            approval/rejection decisions.
+            <br><br>
+            Previously, I served as <strong>Manager &ndash; Medical Claims Audit</strong> at Care
+            Health Insurance Ltd., one of India's largest standalone health insurers, where I audited
+            <strong>1,200+ cashless and reimbursement claims monthly</strong> as a standing member of
+            the Claims Rejection Committee (CRC). My work spanned end-to-end claims auditing, Fraud
+            Waste &amp; Abuse (FWA) detection, medical necessity review, non-admissible charge
+            identification, provider billing analysis, and hospital utilization trend monitoring
+            across 10+ clinical specialties.
+            <br><br>
+            Before that, I served as Medical Officer &ndash; Claims at Safeway Insurance TPA Pvt.
+            Ltd., handling pre-authorization and cashless hospitalization evaluations across
+            multi-specialty cases for multiple insurer clients &mdash; giving me a comprehensive view
+            of both the insurer and TPA sides of the health insurance ecosystem.
+          </p>
+        </div>
 
-        <div class="about-highlights reveal">
-          <h3>What sets me apart</h3>
-          <ul class="highlight-list">
-            <li>
-              <span class="highlight-icon" aria-hidden="true">&#10003;</span>
-              <div>
-                <strong>Dual qualification</strong>
-                <p>Clinical medical background (BHMS &mdash; 5.5-year programme, University of Delhi) enabling deeper medical necessity assessment and discharge summary review than non-clinical claims professionals.</p>
-              </div>
-            </li>
-            <li>
-              <span class="highlight-icon" aria-hidden="true">&#10003;</span>
-              <div>
-                <strong>Analytics-driven auditing</strong>
-                <p>Build insurance claims analytics dashboards in Power BI, translating raw claims data into FWA signals, risk patterns, and operational insights.</p>
-              </div>
-            </li>
-            <li>
-              <span class="highlight-icon" aria-hidden="true">&#10003;</span>
-              <div>
-                <strong>India-to-GCC transition</strong>
-                <p>Currently studying ICD-10 coding, GCC health insurance regulatory frameworks (DHA, HAAD, CCHI), and CPC exam preparation.</p>
-              </div>
-            </li>
-            <li>
-              <span class="highlight-icon" aria-hidden="true">&#10003;</span>
-              <div>
-                <strong>Insurer + TPA experience</strong>
-                <p>Dual-side exposure across cashless, reimbursement, pre-authorization, and audit functions.</p>
-              </div>
-            </li>
-          </ul>
+        <div class="about-highlights-grid">
+          <div class="tilt-card about-highlight-card reveal">
+            <span class="highlight-icon" aria-hidden="true">&#10003;</span>
+            <strong>Dual qualification</strong>
+            <p>Clinical medical background (BHMS &mdash; 5.5-year programme, University of Delhi) enabling deeper medical necessity assessment and discharge summary review than non-clinical claims professionals.</p>
+          </div>
+          <div class="tilt-card about-highlight-card reveal">
+            <span class="highlight-icon" aria-hidden="true">&#10003;</span>
+            <strong>Analytics-driven auditing</strong>
+            <p>Build insurance claims analytics dashboards in Power BI, translating raw claims data into FWA signals, risk patterns, and operational insights.</p>
+          </div>
+          <div class="tilt-card about-highlight-card reveal">
+            <span class="highlight-icon" aria-hidden="true">&#10003;</span>
+            <strong>India-to-GCC transition</strong>
+            <p>Currently studying ICD-10 coding, GCC health insurance regulatory frameworks (DHA, HAAD, CCHI), and CPC exam preparation.</p>
+          </div>
+          <div class="tilt-card about-highlight-card reveal">
+            <span class="highlight-icon" aria-hidden="true">&#10003;</span>
+            <strong>Insurer + TPA experience</strong>
+            <p>Dual-side exposure across cashless, reimbursement, pre-authorization, and audit functions.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -189,7 +216,7 @@
 
         <div class="timeline-item reveal">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
+          <div class="timeline-content tilt-card">
             <span class="timeline-date">Aug 2026 &ndash; Present</span>
             <h3>Manager &ndash; Health Claims</h3>
             <p class="timeline-org">IndusInd General Insurance &middot; Hyderabad, India</p>
@@ -203,7 +230,7 @@
 
         <div class="timeline-item reveal">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
+          <div class="timeline-content tilt-card">
             <span class="timeline-date">Apr 2024 &ndash; Jul 2026</span>
             <h3>Manager &ndash; Medical Claims Audit</h3>
             <p class="timeline-org">Care Health Insurance Ltd. &middot; Gurugram, India</p>
@@ -221,7 +248,7 @@
 
         <div class="timeline-item reveal">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
+          <div class="timeline-content tilt-card">
             <span class="timeline-date">Jan 2023 &ndash; Apr 2024</span>
             <h3>Medical Officer &ndash; Claims</h3>
             <p class="timeline-org">Safeway Insurance TPA Pvt. Ltd. (Health Assist TPA) &middot; Delhi, India</p>
@@ -237,7 +264,7 @@
 
         <div class="timeline-item reveal">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
+          <div class="timeline-content tilt-card">
             <span class="timeline-date">Oct 2021 &ndash; Oct 2022</span>
             <h3>Medical Intern</h3>
             <p class="timeline-org">Nehru Homoeopathic Medical College &amp; Hospital &middot; New Delhi, India</p>
@@ -260,7 +287,7 @@
       <h2 class="section-title reveal">Skills</h2>
 
       <div class="skills-grid">
-        <div class="skill-card reveal">
+        <div class="skill-card tilt-card reveal">
           <h3>Claims &amp; Audit</h3>
           <div class="chip-group">
             <span class="chip">Claims Adjudication</span>
@@ -276,7 +303,7 @@
           </div>
         </div>
 
-        <div class="skill-card reveal">
+        <div class="skill-card tilt-card reveal">
           <h3>Analytics &amp; Tools</h3>
           <div class="chip-group">
             <span class="chip">Microsoft Power BI</span>
@@ -287,7 +314,7 @@
           </div>
         </div>
 
-        <div class="skill-card reveal">
+        <div class="skill-card tilt-card reveal">
           <h3>Regulatory &amp; Compliance</h3>
           <div class="chip-group">
             <span class="chip">ICD-10-CM &amp; CPT</span>
@@ -310,7 +337,7 @@
 
       <div class="projects-grid">
 
-        <article class="project-card reveal">
+        <article class="project-card tilt-card reveal">
           <div class="project-thumb">
             <img src="assets/dashboard-1-claims-analytics.png" alt="Insurance Claims Analytics Dashboard in Power BI" class="project-screenshot" loading="lazy">
           </div>
@@ -327,7 +354,7 @@
           </div>
         </article>
 
-        <article class="project-card reveal">
+        <article class="project-card tilt-card reveal">
           <div class="project-thumb">
             <img src="assets/dashboard-2-policyholder-risk.png" alt="Insurance Claims & Policyholder Risk Analysis Dashboard in Power BI" class="project-screenshot" loading="lazy">
           </div>
@@ -355,37 +382,37 @@
       <h2 class="section-title reveal">Certifications</h2>
 
       <div class="cert-grid">
-        <div class="cert-card reveal">
+        <div class="cert-card tilt-card reveal">
           <span class="cert-badge" aria-hidden="true">&#127891;</span>
           <h3>Licentiate, General Insurance</h3>
           <p>Insurance Institute of India</p>
         </div>
-        <div class="cert-card reveal">
+        <div class="cert-card tilt-card reveal">
           <span class="cert-badge" aria-hidden="true">&#128202;</span>
           <h3>Business Intelligence (BI) Essentials Practical</h3>
           <p>IBM</p>
         </div>
-        <div class="cert-card reveal">
+        <div class="cert-card tilt-card reveal">
           <span class="cert-badge" aria-hidden="true">&#128203;</span>
           <h3>Preparing Data for Analysis with Microsoft Excel</h3>
           <p>Microsoft</p>
         </div>
-        <div class="cert-card reveal">
+        <div class="cert-card tilt-card reveal">
           <span class="cert-badge" aria-hidden="true">&#128274;</span>
           <h3>HIPAA: A Practical Guide</h3>
           <p>LinkedIn Learning</p>
         </div>
-        <div class="cert-card reveal">
+        <div class="cert-card tilt-card reveal">
           <span class="cert-badge" aria-hidden="true">&#128176;</span>
           <h3>Reimbursement Certification</h3>
           <p>MedCerts</p>
         </div>
-        <div class="cert-card reveal">
+        <div class="cert-card tilt-card reveal">
           <span class="cert-badge" aria-hidden="true">&#128172;</span>
           <h3>Communication Tips for Managers</h3>
           <p>LinkedIn Learning</p>
         </div>
-        <div class="cert-card reveal cert-progress">
+        <div class="cert-card tilt-card reveal cert-progress">
           <span class="cert-badge" aria-hidden="true">&#9203;</span>
           <h3>CPC Exam Preparation</h3>
           <p>In Progress</p>
@@ -401,12 +428,12 @@
       <h2 class="section-title reveal">Education</h2>
 
       <div class="education-grid">
-        <div class="education-card reveal">
+        <div class="education-card tilt-card reveal">
           <span class="timeline-date">Nov 2016 &ndash; Oct 2022</span>
           <h3>Bachelor of Homoeopathic Medicine &amp; Surgery (BHMS)</h3>
           <p>Nehru Homoeopathic Medical College &amp; Hospital, New Delhi</p>
         </div>
-        <div class="education-card reveal">
+        <div class="education-card tilt-card reveal">
           <span class="timeline-date">Sept 2024</span>
           <h3>Licentiate, General Insurance</h3>
           <p>Insurance Institute of India</p>
@@ -433,21 +460,21 @@
       <p class="section-lead reveal">Available for relocation &middot; Immediate joiner &middot; Open to health insurance, TPA, healthcare analytics, and utilization review opportunities.</p>
 
       <div class="contact-grid">
-        <a class="contact-card reveal" href="mailto:drharishkumar30@gmail.com">
+        <a class="contact-card tilt-card reveal" href="mailto:drharishkumar30@gmail.com">
           <span class="contact-icon" aria-hidden="true">&#9993;</span>
           <div>
             <h3>Email</h3>
             <p>drharishkumar30@gmail.com</p>
           </div>
         </a>
-        <a class="contact-card reveal" href="tel:+917533078677">
+        <a class="contact-card tilt-card reveal" href="tel:+917533078677">
           <span class="contact-icon" aria-hidden="true">&#128222;</span>
           <div>
             <h3>Phone</h3>
             <p>+91 75330 78677</p>
           </div>
         </a>
-        <a class="contact-card reveal" href="https://www.linkedin.com/in/dr-harish-kumar-hk30" target="_blank" rel="noopener noreferrer">
+        <a class="contact-card tilt-card reveal" href="https://www.linkedin.com/in/dr-harish-kumar-hk30" target="_blank" rel="noopener noreferrer">
           <span class="contact-icon" aria-hidden="true">in</span>
           <div>
             <h3>LinkedIn</h3>
