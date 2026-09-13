@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const typedRoleEl = document.getElementById('typedRole');
   const roles = [
     'Medical Claims Auditor',
+    'Claims Investigation Specialist',
     'Fraud, Waste & Abuse Specialist',
     'Pre-Authorization Expert',
     'Power BI Analytics Builder'
